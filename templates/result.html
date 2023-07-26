@@ -57,6 +57,21 @@
 </head>
 <body>
     <h1>Enrichment Analysis Results</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    {% if missing_herbs %}
+        <div class="missing-herbs-message">
+            <p>The following herbs were not found in the database: {{ ', '.join(missing_herbs) }}</p>
+        </div>
+    {% endif %}
 
     <div class="results-container">
         {% if enrichment_data %}

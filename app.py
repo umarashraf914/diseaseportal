@@ -1,5 +1,5 @@
 # Import necessary modules from Flask, SQLAlchemy, and other libraries
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, flash, get_flashed_messages
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -76,12 +76,14 @@ def search_herb_directory(herb_names):
     if missing_herbs:
         # Display a message or log the missing herbs
         print(f"The following herbs were not found in the database: {', '.join(missing_herbs)}")
+        # flash(f"The following herbs were not found in the database: {', '.join(missing_herbs)}")
 
-    return single_herb_list_gene_symbols
+    return single_herb_list_gene_symbols, missing_herbs
 
 
 
 def find_common_genes(disease_gene_names, all_herbs_gene_symbols):
+
     all_common_genes = []  # List to store the common genes for each herb set
 
     for i, single_herb_list_gene_symbols in enumerate(all_herbs_gene_symbols):
@@ -95,7 +97,27 @@ def find_common_genes(disease_gene_names, all_herbs_gene_symbols):
         # Add the common genes for the current herb set to the list
         all_common_genes.append(list(common_genes))
 
+    print(len(all_common_genes))
     return all_common_genes
+
+# def find_common_genes(disease_gene_names, all_herbs_gene_symbols):
+#     all_common_genes = []
+#
+#     for i, single_herb_list_gene_symbols in enumerate(all_herbs_gene_symbols):
+#
+#         if not disease_gene_names or not single_herb_list_gene_symbols:
+#             all_common_genes.append([])  # Add an empty list if either of the sets is empty
+#
+#         else:
+#             disease_genes_set = set(disease_gene_names)
+#             single_herb_genes_set = set(single_herb_list_gene_symbols)
+#             common_genes = disease_genes_set & single_herb_genes_set
+#
+#             if not common_genes:
+#                 all_common_genes.append(list(common_genes))
+#
+#     # print(all_common_genes)
+#     return all_common_genes
 
 
 def find_unique_genes(all_common_genes):
@@ -110,11 +132,36 @@ def find_unique_genes(all_common_genes):
         herb_list_index = i + 1
         unique_genes_for_list = set(genes) - set().union(*all_common_genes[:i], *all_common_genes[i + 1:]) if len(
             all_common_genes) > 1 else set(genes)
-        print(unique_genes_for_list)
-        print(len(unique_genes_for_list))
-        all_unique_genes.append(unique_genes_for_list)  # Append unique genes to the main list
 
+        if unique_genes_for_list:
+            all_unique_genes.append(unique_genes_for_list)
+
+        else:
+            print('no common genes found')
+
+        print(len(unique_genes_for_list))
+
+    print(all_unique_genes)
+    print(len(all_unique_genes))
     return all_unique_genes
+
+
+# def find_unique_genes(all_common_genes):
+#     unique_genes = set(all_common_genes[0])
+#     all_unique_genes = []
+#
+#     for i, genes in enumerate(all_common_genes):
+#         herb_list_index = i + 1
+#         if len(genes) == 1:
+#             all_unique_genes.append(genes)
+#             continue
+#
+#         unique_genes_for_list = set(genes) - set().union(*all_common_genes[:i], *all_common_genes[i + 1:])
+#         all_unique_genes.append(unique_genes_for_list)
+#     print(len(all_unique_genes))
+#     print(all_unique_genes)
+#     return all_unique_genes
+
 
 
 def upload_gene_lists(gene_lists):
@@ -188,15 +235,12 @@ def enrichment_analysis(data_list, library):
     return data_list
 
 
-
 # Route handler for the homepage
 @app.route('/')
 def index():
     return render_template('index.html')
 
 # Route handler for form submission
-# Route handler for form submission
-
 
 @app.route('/submit', methods=['POST'])
 def submit_form():
@@ -207,7 +251,7 @@ def submit_form():
         herbs_data = json.loads(herbs_data_json)
 
         # Create a list of herb lists from the herbs_data
-        herb_lists_list = [herbs_list.split(', ') for herbs_list in herbs_data]
+        herb_lists_list = [herbs_list.split(',') for herbs_list in herbs_data]
 
         print(herb_lists_list)
 
@@ -220,22 +264,25 @@ def submit_form():
         all_herbs_gene_symbols = []
         for herb_names_list in herb_lists_list:
             herb_names = [herb.strip() for herb in herb_names_list]
-            single_herb_list_gene_symbols = search_herb_directory(herb_names)
+            single_herb_list_gene_symbols, missing_herbs = search_herb_directory(herb_names)
             print(len(single_herb_list_gene_symbols))
-            all_herbs_gene_symbols.append(single_herb_list_gene_symbols)
 
-        print(len(all_herbs_gene_symbols))
-        # print(all_herbs_gene_symbols)
+            if single_herb_list_gene_symbols:
+
+                all_herbs_gene_symbols.append(single_herb_list_gene_symbols)
+
 
         all_common_genes = find_common_genes(disease_gene_symbols, all_herbs_gene_symbols)
 
         if all_common_genes:
 
             all_unique_genes = find_unique_genes(all_common_genes)
-            print(all_unique_genes)
-            print(len(all_unique_genes))
+            # print(all_unique_genes)
+            # print(len(all_unique_genes))
 
             if all_unique_genes:
+
+
                 # Call the Enrichr API to upload gene lists and perform enrichment analysis
                 json_data = upload_gene_lists(all_unique_genes)
                 library = 'DisGeNET'

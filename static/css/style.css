@@ -31,7 +31,7 @@ form textarea {
     width: 900px;
     padding: 10px;
     margin-bottom: 15px;
-    margin: 0; /* Fix the margin */
+    margin: 0;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -84,12 +84,15 @@ form input[type="reset"]:hover {
     width: 280px;
     padding: 5px;
     margin-bottom: 20px;
-    margin: 0; /* Fix the margin */
+    margin: 0;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
 }
 
 .herbs-input-wrapper {
-    margin-top: 15px; /* Add spacing between the herb text boxes */
+    margin-top: 15px;
 }
+
+
+
