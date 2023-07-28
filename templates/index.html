@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Include the jQuery UI CSS file for autocomplete styles -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <style>
         /* ... (Other CSS styles) ... */
     </style>
@@ -18,16 +20,24 @@
         <div class="herbs-container" id="dynamic-herbs">
             <!-- Additional herb inputs will be dynamically added here (handled by script.js) -->
         </div>
-        <button type="button" id="add-btn">Add Prescription</button>
-        <button type="button" id="remove-btn">Remove Prescription</button>
-        <button type="submit" id="submit-btn">Search</button>
-        <button type="reset" id="clear-btn">Clear</button>
+        <button type="button" id="add-btn" class="icon-btn primary">
+            <i class="fas fa-plus"></i> Add Prescription
+        </button>
+        <button type="button" id="remove-btn" class="icon-btn secondary">
+            <i class="fas fa-minus"></i> Remove Prescription
+        </button>
+        <button type="submit" id="submit-btn" class="icon-btn">
+            <i class="fas fa-search"></i> Search
+        </button>
+        <button type="reset" id="clear-btn" class="icon-btn">
+            <i class="fas fa-eraser"></i> Clear
+        </button>
         {% if error %}
             <p class="error-message">{{ error }}</p>
         {% endif %}
         <div class="herbs-data-container" style="display: none;">
             <input type="text" name="herbs_data" id="herbs-data-input">
-        </div>
+            </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include the jQuery UI library -->

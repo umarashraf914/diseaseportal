@@ -94,5 +94,73 @@ form input[type="reset"]:hover {
     margin-top: 15px;
 }
 
+/* ... (Your existing CSS rules) ... */
+
+/* Common styles for all buttons */
+form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+/* Primary button with green background */
+form button.primary {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Secondary button with red background */
+form button.secondary {
+    background-color: #e41414;
+    color: white;
+}
+
+/* Buttons with icons */
+form button.icon-btn {
+    position: relative;
+    padding-left: 40px;
+}
+
+form button.icon-btn i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Add Prescription button with plus icon */
+form button#add-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Remove Prescription button with minus icon */
+form button#remove-btn {
+    background-color: #ff0000;
+    color: white;
+}
+
+/* Search button with search icon */
+form button#submit-btn {
+    background-color: #45a049;
+    color: white;
+}
+
+/* Clear button with eraser icon */
+form button#clear-btn {
+    background-color: #ccc;
+    color: #444;
+}
+
+/* Hover effect for all buttons */
+form button:hover {
+    opacity: 0.8;
+}
+
+
 
 
