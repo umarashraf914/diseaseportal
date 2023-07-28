@@ -79,3 +79,38 @@ form.addEventListener('submit', (event) => {
     // Submit the form
     form.submit();
 });
+
+// Add this code at the end of your script.js file
+
+$(document).ready(function () {
+    // Disease input autocomplete
+    $("#disease").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "/autocomplete_diseases", // This endpoint should handle the autocomplete for diseases
+                data: { term: request.term },
+                dataType: "json",
+                success: function (data) {
+                    response(data);
+                },
+            });
+        },
+        minLength: 2, // Start searching after typing at least 2 characters
+    });
+
+    // Herbs input autocomplete
+    $(".herbs-input").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "/autocomplete_herbs", // This endpoint should handle the autocomplete for herbs
+                data: { term: request.term },
+                dataType: "json",
+                success: function (data) {
+                    response(data);
+                },
+            });
+        },
+        minLength: 2, // Start searching after typing at least 2 characters
+    });
+});
+

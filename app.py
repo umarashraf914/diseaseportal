@@ -1,5 +1,5 @@
 # Import necessary modules from Flask, SQLAlchemy, and other libraries
-from flask import Flask, render_template, url_for, request, redirect, flash, get_flashed_messages
+from flask import Flask, render_template, url_for, request, redirect, jsonify, flash, get_flashed_messages
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -8,6 +8,7 @@ import pandas as pd
 import json
 import requests
 from sqlalchemy import func
+from flask_migrate import Migrate
 
 # Create a Flask application instance
 app = Flask(__name__)
@@ -20,9 +21,12 @@ db = SQLAlchemy(app)
 engine = create_engine('sqlite:///diseaseportal.db')
 Session = sessionmaker(bind=engine)
 
+
+# Initialize Migrate object
+migrate = Migrate(app, db)
+
+
 # Define SQLAlchemy models for the Disease and Herb tables
-
-
 class Disease(db.Model):
     __tablename__ = 'diseases'
     Serial_Number_D = db.Column(db.INTEGER, primary_key=True, autoincrement=True)
@@ -33,7 +37,6 @@ class Disease(db.Model):
     diseaseName = db.Column(db.TEXT)
     geneName = db.Column(db.TEXT)
     score = db.Column(db.TEXT)
-
 
 class Herb(db.Model):
     __tablename__ = 'herbs'
@@ -94,30 +97,18 @@ def find_common_genes(disease_gene_names, all_herbs_gene_symbols):
         common_genes = disease_genes_set & single_herb_genes_set  # Find common elements
         # print(len(common_genes))
 
-        # Add the common genes for the current herb set to the list
-        all_common_genes.append(list(common_genes))
+        if common_genes:
+
+            # Add the common genes for the current herb set to the list
+            all_common_genes.append(list(common_genes))
+
+        else:
+
+            print('No common genes found')
 
     print(len(all_common_genes))
     return all_common_genes
 
-# def find_common_genes(disease_gene_names, all_herbs_gene_symbols):
-#     all_common_genes = []
-#
-#     for i, single_herb_list_gene_symbols in enumerate(all_herbs_gene_symbols):
-#
-#         if not disease_gene_names or not single_herb_list_gene_symbols:
-#             all_common_genes.append([])  # Add an empty list if either of the sets is empty
-#
-#         else:
-#             disease_genes_set = set(disease_gene_names)
-#             single_herb_genes_set = set(single_herb_list_gene_symbols)
-#             common_genes = disease_genes_set & single_herb_genes_set
-#
-#             if not common_genes:
-#                 all_common_genes.append(list(common_genes))
-#
-#     # print(all_common_genes)
-#     return all_common_genes
 
 
 def find_unique_genes(all_common_genes):
@@ -137,7 +128,7 @@ def find_unique_genes(all_common_genes):
             all_unique_genes.append(unique_genes_for_list)
 
         else:
-            print('no common genes found')
+            print('no unique genes found')
 
         print(len(unique_genes_for_list))
 
@@ -146,38 +137,28 @@ def find_unique_genes(all_common_genes):
     return all_unique_genes
 
 
-# def find_unique_genes(all_common_genes):
-#     unique_genes = set(all_common_genes[0])
-#     all_unique_genes = []
-#
-#     for i, genes in enumerate(all_common_genes):
-#         herb_list_index = i + 1
-#         if len(genes) == 1:
-#             all_unique_genes.append(genes)
-#             continue
-#
-#         unique_genes_for_list = set(genes) - set().union(*all_common_genes[:i], *all_common_genes[i + 1:])
-#         all_unique_genes.append(unique_genes_for_list)
-#     print(len(all_unique_genes))
-#     print(all_unique_genes)
-#     return all_unique_genes
-
-
-
 def upload_gene_lists(gene_lists):
-    ENRICHR_URL = 'https://maayanlab.cloud/Enrichr/addList'
-    all_data = []  # Collect the results for each gene list
 
-    for gene_list in gene_lists:
-        genes_str = "\n".join(list(gene_list))
-        payload = {
-            'list': (None, genes_str),
-        }
-        response = requests.post(ENRICHR_URL, files=payload)
-        if not response.ok:
-             raise Exception('Error analyzing gene list')
-        data = json.loads(response.text)
-        all_data.append(data)
+    if(gene_lists):
+
+        ENRICHR_URL = 'https://maayanlab.cloud/Enrichr/addList'
+        all_data = []  # Collect the results for each gene list
+
+        for gene_list in gene_lists:
+            genes_str = "\n".join(list(gene_list))
+            payload = {
+                'list': (None, genes_str),
+            }
+            response = requests.post(ENRICHR_URL, files=payload)
+            if not response.ok:
+                 raise Exception('Error analyzing gene list')
+            data = json.loads(response.text)
+            all_data.append(data)
+
+        else:
+
+            ('Cannot Uplooad Genes as unique genes list is empty')
+
 
     return all_data
 
@@ -240,7 +221,26 @@ def enrichment_analysis(data_list, library):
 def index():
     return render_template('index.html')
 
-# Route handler for form submission
+
+@app.route('/autocomplete_diseases')
+def autocomplete_diseases():
+    term = request.args.get('term', '')
+    # Query the Disease table for disease names that match the term
+    matching_diseases = db.session.query(Disease.diseaseName).filter(Disease.diseaseName.ilike(f'%{term}%')).all()
+    disease_names = [disease[0] for disease in matching_diseases]
+    return jsonify(disease_names)
+
+
+@app.route('/autocomplete_herbs')
+def autocomplete_herbs():
+    term = request.args.get('term', '')
+    # Query the Herbs table for herb names that match the term
+    matching_herbs = db.session.query(Herb.herbName).filter(Herb.herbName.ilike(f'%{term}%')).all()
+    herb_names = [herb[0] for herb in matching_herbs]
+    return jsonify(herb_names)
+
+
+#Route handler for form submission
 
 @app.route('/submit', methods=['POST'])
 def submit_form():
@@ -288,11 +288,12 @@ def submit_form():
                 library = 'DisGeNET'
                 enrichment_data = enrichment_analysis(json_data, library)
 
-            # Pass the enrichment_data to the results page
-            return render_template('result.html', enrichment_data=enrichment_data)
+                # Pass the enrichment_data to the results page
+                return render_template('result.html', enrichment_data=enrichment_data)
 
     # If the method is not POST (e.g., accessing the page directly), redirect to the homepage
     return redirect(url_for('index'))
+
 
 
 # The main entry point of the application
