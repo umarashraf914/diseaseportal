@@ -53,6 +53,10 @@ def search_disease(disease_name):
     matching_records = session.query(Disease).filter(Disease.diseaseName.ilike(disease_name.lower())).all()
     session.close()
     disease_gene_symbols = [record.geneName for record in matching_records]
+
+    if not disease_gene_symbols:
+        return None
+
     return disease_gene_symbols
 
 
@@ -157,7 +161,7 @@ def upload_gene_lists(gene_lists):
 
         else:
 
-            ('Cannot Uplooad Genes as unique genes list is empty')
+            print('Cannot Uplooad Genes as unique genes list is empty')
 
 
     return all_data
@@ -228,6 +232,7 @@ def autocomplete_diseases():
     # Query the Disease table for disease names that match the term
     matching_diseases = db.session.query(Disease.diseaseName).filter(Disease.diseaseName.ilike(f'%{term}%')).all()
     disease_names = [disease[0] for disease in matching_diseases]
+    print(disease_names)
     return jsonify(disease_names)
 
 
@@ -237,6 +242,8 @@ def autocomplete_herbs():
     # Query the Herbs table for herb names that match the term
     matching_herbs = db.session.query(Herb.herbName).filter(Herb.herbName.ilike(f'%{term}%')).all()
     herb_names = [herb[0] for herb in matching_herbs]
+
+    print(herb_names)
     return jsonify(herb_names)
 
 
@@ -255,8 +262,31 @@ def submit_form():
 
         print(herb_lists_list)
 
+        if len(herb_lists_list) > 1:
+
+            # Check if all the prescriptions are the same
+            all_prescriptions_same = all(herb_lists_list[0] == herb_list for herb_list in herb_lists_list)
+
+            if all_prescriptions_same:
+                # Flash a message indicating all prescriptions are the same
+                flash("All the prescriptions are the same. Please provide different prescriptions.")
+
+                # Redirect back to the index page
+                return redirect(url_for('index'))
+
         # Call the search_disease function to query the database for disease information
         disease_gene_symbols = search_disease(disease_name)
+
+
+
+        if not disease_gene_symbols:
+
+
+            # Flash a message indicating the missing disease
+            flash(f"The disease '{disease_name}' was not found in the database.")
+
+            # Redirect back to the index page
+            return redirect(url_for('index'))
 
         print(len(disease_gene_symbols))
 

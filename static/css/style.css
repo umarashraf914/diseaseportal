@@ -1,5 +1,6 @@
 body {
     display: flex;
+    flex-direction : column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -134,7 +135,8 @@ form button.icon-btn i {
 
 /* Add Prescription button with plus icon */
 form button#add-btn {
-    background-color: #007bff;
+    /*background-color: #007bff;*/
+    background-color: #45a049;
     color: white;
 }
 
@@ -146,7 +148,8 @@ form button#remove-btn {
 
 /* Search button with search icon */
 form button#submit-btn {
-    background-color: #45a049;
+    /*background-color: #45a049;*/
+    background-color: #007bff;
     color: white;
 }
 
@@ -159,6 +162,22 @@ form button#clear-btn {
 /* Hover effect for all buttons */
 form button:hover {
     opacity: 0.8;
+}
+/* Add this to your style.css file */
+.error-message {
+    color: red;
+    animation: flash 3s 2; /* Add flashing effect */
+    margin-bottom: 20px; /* Add a small margin between the message and the form */
+    font-size: 30px;
+}
+
+@keyframes flash {
+    0%, 50%, 100% {
+        opacity: 1;
+    }
+    25%, 75% {
+        opacity: 0;
+    }
 }
 
 

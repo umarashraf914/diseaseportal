@@ -1,18 +1,30 @@
+
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Prescription Form</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Include the jQuery UI CSS file for autocomplete styles -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-    <style>
-        /* ... (Other CSS styles) ... */
-    </style>
 </head>
+
 <body>
+
+        <!-- Add this code snippet to display flashed message -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+<!--                <div class="alert alert-warning {{ 'error-message' if messages[0] == 'All the prescriptions are the same. Please provide different prescriptions.' else '' }}" role="alert">-->
+        <div class="error-message">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+
     <form action="{{ url_for('submit_form') }}" method="post">
+
         <input type="text" id="disease" name="disease" placeholder="Enter the disease" required class="autocomplete">
         <div class="herbs-container">
             <input type="text" class="herbs-input autocomplete" name="herbs[]" placeholder="Enter the herbs" required>
@@ -32,12 +44,10 @@
         <button type="reset" id="clear-btn" class="icon-btn">
             <i class="fas fa-eraser"></i> Clear
         </button>
-        {% if error %}
-            <p class="error-message">{{ error }}</p>
-        {% endif %}
+
         <div class="herbs-data-container" style="display: none;">
             <input type="text" name="herbs_data" id="herbs-data-input">
-            </div>
+        </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include the jQuery UI library -->
