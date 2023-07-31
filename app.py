@@ -1,5 +1,5 @@
 # Import necessary modules from Flask, SQLAlchemy, and other libraries
-from flask import Flask, render_template, url_for, request, redirect, jsonify, flash, get_flashed_messages
+from flask import Flask, render_template, url_for, request, redirect, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -7,7 +7,7 @@ import secrets
 import pandas as pd
 import json
 import requests
-from sqlalchemy import func
+# from sqlalchemy import func
 from flask_migrate import Migrate
 
 # Create a Flask application instance
@@ -38,6 +38,7 @@ class Disease(db.Model):
     geneName = db.Column(db.TEXT)
     score = db.Column(db.TEXT)
 
+
 class Herb(db.Model):
     __tablename__ = 'herbs'
     Serial_Number_H = db.Column(db.INTEGER, primary_key=True, autoincrement=True)
@@ -67,7 +68,9 @@ def search_herb_directory(herb_names):
 
     for herb_name in herb_names:
         # Assuming herb_name contains the input term
-        herb_records = session.query(Herb).filter(func.lower(Herb.herbName) == herb_name.lower()).all()
+        # herb_records = session.query(Herb).filter(func.lower(Herb.herbName) == herb_name.lower()).all()
+        herb_records = session.query(Herb).filter(Herb.herbName.ilike(herb_name)).all()
+
         gene_symbols = [record.Genes for record in herb_records]
         # print(herb_name)
         # print(len(gene_symbols))
@@ -86,7 +89,6 @@ def search_herb_directory(herb_names):
         # flash(f"The following herbs were not found in the database: {', '.join(missing_herbs)}")
 
     return single_herb_list_gene_symbols, missing_herbs
-
 
 
 def find_common_genes(disease_gene_names, all_herbs_gene_symbols):
@@ -114,7 +116,6 @@ def find_common_genes(disease_gene_names, all_herbs_gene_symbols):
     return all_common_genes
 
 
-
 def find_unique_genes(all_common_genes):
     unique_genes = set(all_common_genes[0])  # Initialize with the genes from the first list
     all_unique_genes = []  # Main list to store unique genes for all herb lists
@@ -124,7 +125,6 @@ def find_unique_genes(all_common_genes):
         unique_genes -= set(common_genes)
 
     for i, genes in enumerate(all_common_genes):
-        herb_list_index = i + 1
         unique_genes_for_list = set(genes) - set().union(*all_common_genes[:i], *all_common_genes[i + 1:]) if len(
             all_common_genes) > 1 else set(genes)
 
@@ -143,10 +143,10 @@ def find_unique_genes(all_common_genes):
 
 def upload_gene_lists(gene_lists):
 
-    if(gene_lists):
+    all_data = []  # Collect the results for each gene list
+    if gene_lists:
 
         ENRICHR_URL = 'https://maayanlab.cloud/Enrichr/addList'
-        all_data = []  # Collect the results for each gene list
 
         for gene_list in gene_lists:
             genes_str = "\n".join(list(gene_list))
@@ -155,18 +155,15 @@ def upload_gene_lists(gene_lists):
             }
             response = requests.post(ENRICHR_URL, files=payload)
             if not response.ok:
-                 raise Exception('Error analyzing gene list')
+                raise Exception('Error analyzing gene list')
             data = json.loads(response.text)
             all_data.append(data)
 
         else:
 
-            print('Cannot Uplooad Genes as unique genes list is empty')
-
+            print('Cannot Upload Genes as unique genes list is empty')
 
     return all_data
-
-
 
 
 def enrichment_analysis(data_list, library):
@@ -247,7 +244,7 @@ def autocomplete_herbs():
     return jsonify(herb_names)
 
 
-#Route handler for form submission
+# Route handler for form submission
 
 @app.route('/submit', methods=['POST'])
 def submit_form():
@@ -277,10 +274,7 @@ def submit_form():
         # Call the search_disease function to query the database for disease information
         disease_gene_symbols = search_disease(disease_name)
 
-
-
         if not disease_gene_symbols:
-
 
             # Flash a message indicating the missing disease
             flash(f"The disease '{disease_name}' was not found in the database.")
@@ -301,7 +295,6 @@ def submit_form():
 
                 all_herbs_gene_symbols.append(single_herb_list_gene_symbols)
 
-
         all_common_genes = find_common_genes(disease_gene_symbols, all_herbs_gene_symbols)
 
         if all_common_genes:
@@ -311,7 +304,6 @@ def submit_form():
             # print(len(all_unique_genes))
 
             if all_unique_genes:
-
 
                 # Call the Enrichr API to upload gene lists and perform enrichment analysis
                 json_data = upload_gene_lists(all_unique_genes)
@@ -323,7 +315,6 @@ def submit_form():
 
     # If the method is not POST (e.g., accessing the page directly), redirect to the homepage
     return redirect(url_for('index'))
-
 
 
 # The main entry point of the application
