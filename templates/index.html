@@ -1,54 +1,110 @@
 
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+
+<!--    <title>Prescription Form</title>-->
+
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">-->
+<!--    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">-->
+
+<!--</head>-->
+
+<!--<body>-->
+
+<!--        &lt;!&ndash; Add this code snippet to display flashed message &ndash;&gt;-->
+<!--        {% with messages = get_flashed_messages() %}-->
+<!--            {% if messages %}-->
+<!--&lt;!&ndash;                <div class="alert alert-warning {{ 'error-message' if messages[0] == 'All the prescriptions are the same. Please provide different prescriptions.' else '' }}" role="alert">&ndash;&gt;-->
+<!--        <div class="error-message">-->
+<!--                    {{ messages[0] }}-->
+<!--                </div>-->
+<!--            {% endif %}-->
+<!--        {% endwith %}-->
+
+<!--    <form action="{{ url_for('submit_form') }}" method="post">-->
+
+<!--        <input type="text" id="disease" name="disease" placeholder="Enter the disease" required class="autocomplete">-->
+<!--        <div class="herbs-container">-->
+<!--            <input type="text" class="herbs-input autocomplete" name="herbs[]" placeholder="Enter the herbs" required>-->
+<!--        </div>-->
+<!--        <div class="herbs-container" id="dynamic-herbs">-->
+<!--            &lt;!&ndash; Additional herb inputs will be dynamically added here (handled by script.js) &ndash;&gt;-->
+<!--        </div>-->
+<!--        <button type="button" id="add-btn" class="icon-btn primary">-->
+<!--            <i class="fas fa-plus"></i> Add Prescription-->
+<!--        </button>-->
+<!--        <button type="button" id="remove-btn" class="icon-btn secondary">-->
+<!--            <i class="fas fa-minus"></i> Remove Prescription-->
+<!--        </button>-->
+<!--        <button type="submit" id="submit-btn" class="icon-btn">-->
+<!--            <i class="fas fa-search"></i> Search-->
+<!--        </button>-->
+<!--        <button type="reset" id="clear-btn" class="icon-btn">-->
+<!--            <i class="fas fa-eraser"></i> Clear-->
+<!--        </button>-->
+
+<!--        <div class="herbs-data-container" style="display: none;">-->
+<!--            <input type="text" name="herbs_data" id="herbs-data-input">-->
+<!--        </div>-->
+<!--    </form>-->
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<!--    &lt;!&ndash; Include the jQuery UI library &ndash;&gt;-->
+<!--    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>-->
+<!--    <script src="{{ url_for('static', filename='script.js') }}"></script>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html>
 <head>
-
     <title>Prescription Form</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
 </head>
 
 <body>
+<!--    <div class="form-container">-->
+<!--        <img class="form-image" src="static/images/Untitled design.png" alt="Form Image">-->
+        <form action="{{ url_for('submit_form') }}" method="post">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="error-message">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
 
-        <!-- Add this code snippet to display flashed message -->
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-<!--                <div class="alert alert-warning {{ 'error-message' if messages[0] == 'All the prescriptions are the same. Please provide different prescriptions.' else '' }}" role="alert">-->
-        <div class="error-message">
-                    {{ messages[0] }}
-                </div>
-            {% endif %}
-        {% endwith %}
+            <input type="text" id="disease" name="disease" placeholder="Enter the Disease" required class="autocomplete">
 
-    <form action="{{ url_for('submit_form') }}" method="post">
+            <div class="herbs-container">
+                <input type="text" class="herbs-input autocomplete" placeholder="Enter the Herbs" name="herbs[]" required>
+            </div>
 
-        <input type="text" id="disease" name="disease" placeholder="Enter the disease" required class="autocomplete">
-        <div class="herbs-container">
-            <input type="text" class="herbs-input autocomplete" name="herbs[]" placeholder="Enter the herbs" required>
-        </div>
-        <div class="herbs-container" id="dynamic-herbs">
-            <!-- Additional herb inputs will be dynamically added here (handled by script.js) -->
-        </div>
-        <button type="button" id="add-btn" class="icon-btn primary">
-            <i class="fas fa-plus"></i> Add Prescription
-        </button>
-        <button type="button" id="remove-btn" class="icon-btn secondary">
-            <i class="fas fa-minus"></i> Remove Prescription
-        </button>
-        <button type="submit" id="submit-btn" class="icon-btn">
-            <i class="fas fa-search"></i> Search
-        </button>
-        <button type="reset" id="clear-btn" class="icon-btn">
-            <i class="fas fa-eraser"></i> Clear
-        </button>
+            <div class="herbs-container" id="dynamic-herbs">
+                <!-- Additional herb inputs will be dynamically added here (handled by script.js) -->
+            </div>
 
-        <div class="herbs-data-container" style="display: none;">
-            <input type="text" name="herbs_data" id="herbs-data-input">
-        </div>
-    </form>
+            <button type="button" id="add-btn" class="icon-btn primary">
+                <i class="fas fa-plus"></i> Add Prescription
+            </button>
+            <button type="button" id="remove-btn" class="icon-btn secondary">
+                <i class="fas fa-minus"></i> Remove Prescription
+            </button>
+            <button type="submit" id="submit-btn" class="icon-btn">
+                <i class="fas fa-search"></i> Search
+            </button>
+            <button type="reset" id="clear-btn" class="icon-btn">
+                <i class="fas fa-eraser"></i> Clear
+            </button>
+
+            <div class="herbs-data-container" style="display: none;">
+                <input type="text" name="herbs_data" id="herbs-data-input">
+            </div>
+        </form>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include the jQuery UI library -->
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

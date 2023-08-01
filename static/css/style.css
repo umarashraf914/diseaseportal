@@ -1,12 +1,22 @@
+
+/* Add the background image and opacity to the body element */
 body {
     display: flex;
-    flex-direction : column;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    /*background-image: url("{{ url_for('static', filename='images/ktm.jpg') }}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.5; /* Adjust the opacity as needed */
     background-color: #f3f3f3;
 }
+
+/* Rest of your existing CSS rules... */
+
 
 form {
     text-align: center;

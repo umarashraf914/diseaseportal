@@ -7,7 +7,7 @@ import secrets
 import pandas as pd
 import json
 import requests
-# from sqlalchemy import func
+from sqlalchemy import func
 from flask_migrate import Migrate
 
 # Create a Flask application instance
@@ -68,8 +68,8 @@ def search_herb_directory(herb_names):
 
     for herb_name in herb_names:
         # Assuming herb_name contains the input term
-        # herb_records = session.query(Herb).filter(func.lower(Herb.herbName) == herb_name.lower()).all()
-        herb_records = session.query(Herb).filter(Herb.herbName.ilike(herb_name)).all()
+        herb_records = session.query(Herb).filter(func.lower(Herb.herbName) == herb_name.lower()).all()
+        # herb_records = session.query(Herb).filter(Herb.herbName.ilike(herb_name)).all()
 
         gene_symbols = [record.Genes for record in herb_records]
         # print(herb_name)
@@ -166,12 +166,13 @@ def upload_gene_lists(gene_lists):
     return all_data
 
 
-def enrichment_analysis(data_list, library):
+def enrichment_analysis(data_list, library, herb_names):
     ENRICHR_URL = 'https://maayanlab.cloud/Enrichr/enrich'
     query_string = '?userListId=%s&backgroundType=%s'
     gene_set_library = library
 
     for data in data_list:
+        data['herb_names'] = ', '.join(herb_names)  # Add herb names to the data dictionary
         user_list_id = data['userListId']
         response = requests.get(ENRICHR_URL + query_string % (user_list_id, gene_set_library))
         if not response.ok:
@@ -244,8 +245,6 @@ def autocomplete_herbs():
     return jsonify(herb_names)
 
 
-# Route handler for form submission
-
 @app.route('/submit', methods=['POST'])
 def submit_form():
     if request.method == 'POST':
@@ -286,14 +285,16 @@ def submit_form():
 
         # Call the search_herb_directory function to query the database for herb information
         all_herbs_gene_symbols = []
+        all_herbs_names = []  # List to store the herb names for each herb list
+
         for herb_names_list in herb_lists_list:
             herb_names = [herb.strip() for herb in herb_names_list]
             single_herb_list_gene_symbols, missing_herbs = search_herb_directory(herb_names)
             print(len(single_herb_list_gene_symbols))
 
             if single_herb_list_gene_symbols:
-
                 all_herbs_gene_symbols.append(single_herb_list_gene_symbols)
+                all_herbs_names.append(herb_names)  # Store the herb names for each herb list
 
         all_common_genes = find_common_genes(disease_gene_symbols, all_herbs_gene_symbols)
 
@@ -305,16 +306,24 @@ def submit_form():
 
             if all_unique_genes:
 
-                # Call the Enrichr API to upload gene lists and perform enrichment analysis
-                json_data = upload_gene_lists(all_unique_genes)
+                # Call the Enrichr API to upload gene lists and perform enrichment analysis for each herb list
+                enrichment_data = []
+                json_data_list = []
                 library = 'DisGeNET'
-                enrichment_data = enrichment_analysis(json_data, library)
+
+                for unique_genes, herb_names in zip(all_unique_genes, all_herbs_names):
+                    # Call the Enrichr API to upload gene lists and perform enrichment analysis
+                    json_data = upload_gene_lists([unique_genes])
+                    json_data_list.extend(json_data)
+                    herb_enrichment_data = enrichment_analysis(json_data, library, herb_names)
+                    enrichment_data.extend(herb_enrichment_data)
 
                 # Pass the enrichment_data to the results page
                 return render_template('result.html', enrichment_data=enrichment_data)
 
     # If the method is not POST (e.g., accessing the page directly), redirect to the homepage
     return redirect(url_for('index'))
+
 
 
 # The main entry point of the application
