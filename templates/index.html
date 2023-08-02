@@ -1,72 +1,46 @@
-
-<!--<!DOCTYPE html>-->
-<!--<html>-->
-<!--<head>-->
-
-<!--    <title>Prescription Form</title>-->
-
-<!--    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">-->
-<!--    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">-->
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">-->
-
-<!--</head>-->
-
-<!--<body>-->
-
-<!--        &lt;!&ndash; Add this code snippet to display flashed message &ndash;&gt;-->
-<!--        {% with messages = get_flashed_messages() %}-->
-<!--            {% if messages %}-->
-<!--&lt;!&ndash;                <div class="alert alert-warning {{ 'error-message' if messages[0] == 'All the prescriptions are the same. Please provide different prescriptions.' else '' }}" role="alert">&ndash;&gt;-->
-<!--        <div class="error-message">-->
-<!--                    {{ messages[0] }}-->
-<!--                </div>-->
-<!--            {% endif %}-->
-<!--        {% endwith %}-->
-
-<!--    <form action="{{ url_for('submit_form') }}" method="post">-->
-
-<!--        <input type="text" id="disease" name="disease" placeholder="Enter the disease" required class="autocomplete">-->
-<!--        <div class="herbs-container">-->
-<!--            <input type="text" class="herbs-input autocomplete" name="herbs[]" placeholder="Enter the herbs" required>-->
-<!--        </div>-->
-<!--        <div class="herbs-container" id="dynamic-herbs">-->
-<!--            &lt;!&ndash; Additional herb inputs will be dynamically added here (handled by script.js) &ndash;&gt;-->
-<!--        </div>-->
-<!--        <button type="button" id="add-btn" class="icon-btn primary">-->
-<!--            <i class="fas fa-plus"></i> Add Prescription-->
-<!--        </button>-->
-<!--        <button type="button" id="remove-btn" class="icon-btn secondary">-->
-<!--            <i class="fas fa-minus"></i> Remove Prescription-->
-<!--        </button>-->
-<!--        <button type="submit" id="submit-btn" class="icon-btn">-->
-<!--            <i class="fas fa-search"></i> Search-->
-<!--        </button>-->
-<!--        <button type="reset" id="clear-btn" class="icon-btn">-->
-<!--            <i class="fas fa-eraser"></i> Clear-->
-<!--        </button>-->
-
-<!--        <div class="herbs-data-container" style="display: none;">-->
-<!--            <input type="text" name="herbs_data" id="herbs-data-input">-->
-<!--        </div>-->
-<!--    </form>-->
-<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
-<!--    &lt;!&ndash; Include the jQuery UI library &ndash;&gt;-->
-<!--    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>-->
-<!--    <script src="{{ url_for('static', filename='script.js') }}"></script>-->
-<!--</body>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Prescription Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
 <body>
-<!--    <div class="form-container">-->
-<!--        <img class="form-image" src="static/images/Untitled design.png" alt="Form Image">-->
+
+<nav class="navbar fixed-top navbar-dark bg-dark">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand mx-auto" href="#">Prescription Comparison</a> <!-- Moved the brand to the right -->
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto"> <!-- Use ml-auto for right alignment of the links -->
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+    </ul>
+  </div>
+</nav>
+
+<img class="form-image" src="static/images/Untitled design.png" alt="Form Image">
+    <div class="form-container">
+
         <form action="{{ url_for('submit_form') }}" method="post">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
@@ -105,9 +79,25 @@
         </form>
     </div>
 
+<nav class="navbar fixed-bottom navbar-dark bg-dark centered-links">
+    <a class="navbar-brand mr-3" href="#">Connect to Us on:</a>
+    <a class="navbar-link mr-4" href="https://www.facebook.com/withkiom/" target="_blank">
+        <i class="fab fa-facebook-f fa-2x"></i>
+    </a>
+    <a class="navbar-link mr-4" href="https://www.instagram.com/kiomistory/" target="_blank">
+        <i class="fab fa-instagram fa-2x"></i>
+    </a>
+    <a class="navbar-link mr-4" href="https://www.youtube.com/user/kiomvideo" target="_blank">
+        <i class="fab fa-youtube fa-2x"></i>
+    </a>
+</nav>
+
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Include the jQuery UI library -->
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

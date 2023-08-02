@@ -9,6 +9,12 @@ import json
 import requests
 from sqlalchemy import func
 from flask_migrate import Migrate
+import gseapy as gp
+from gseapy import barplot, dotplot
+import matplotlib.pyplot as plt
+from gseapy import gseaplot
+from io import BytesIO
+
 
 # Create a Flask application instance
 app = Flask(__name__)
@@ -82,11 +88,6 @@ def search_herb_directory(herb_names):
             single_herb_list_gene_symbols.extend(gene_symbols)
 
     session.close()
-
-    if missing_herbs:
-        # Display a message or log the missing herbs
-        print(f"The following herbs were not found in the database: {', '.join(missing_herbs)}")
-        # flash(f"The following herbs were not found in the database: {', '.join(missing_herbs)}")
 
     return single_herb_list_gene_symbols, missing_herbs
 
@@ -164,6 +165,58 @@ def upload_gene_lists(gene_lists):
             print('Cannot Upload Genes as unique genes list is empty')
 
     return all_data
+
+
+# def enrichment_analysis(data_list, library, herb_names):
+#     ENRICHR_URL = 'https://maayanlab.cloud/Enrichr/enrich'
+#     query_string = '?userListId=%s&backgroundType=%s'
+#     gene_set_library = library
+#
+#     for data in data_list:
+#         data['herb_names'] = ', '.join(herb_names)  # Add herb names to the data dictionary
+#         user_list_id = data['userListId']
+#         response = requests.get(ENRICHR_URL + query_string % (user_list_id, gene_set_library))
+#         if not response.ok:
+#             raise Exception(f"Error fetching enrichment results for userListId: {user_list_id}")
+#
+#         enrichment_data = json.loads(response.text)
+#         df = pd.DataFrame(enrichment_data)
+#
+#         # Column names for the new DataFrame
+#         column_names = ['Rank', 'Term name', 'P-value', 'Z-score', 'Combined score', 'Overlapping genes',
+#                         'Adjusted p-value', 'Old p-value', 'Old adjusted p-value']
+#
+#         # Create an empty DataFrame to store the enrichment data for the current herb set
+#         data['enrichment_data'] = []
+#
+#         # Iterate over the rows in the DataFrame
+#         for _, row in df.iterrows():
+#             for element in row:
+#                 # Extract the values from the element
+#                 rank = element[0]
+#                 term_name = element[1]
+#                 p_value = element[2]
+#                 z_score = element[3]
+#                 combined_score = element[4]
+#                 overlapping_genes = ', '.join(element[5])
+#                 adjusted_p_value = element[6]
+#                 old_p_value = element[7]
+#                 old_adjusted_p_value = element[8]
+#
+#                 # Check if the adjusted_p_value is greater than 0.01
+#                 if adjusted_p_value < 0.05:
+#                     # Create a new row with extracted values
+#                     new_row = pd.DataFrame([[rank, term_name, p_value, z_score, combined_score, overlapping_genes,
+#                                              adjusted_p_value, old_p_value, old_adjusted_p_value]],
+#                                            columns=column_names)
+#
+#                     # Append the new row to the enrichment data for the current herb set
+#                     data['enrichment_data'].append(new_row.to_dict(orient='records')[0])
+#
+#         # Filter the enrichment data to get only the top 15 entries with adjusted_p_value > 0.01
+#         data['enrichment_data'] = data['enrichment_data'][:15]
+#
+#     return data_list
 
 
 def enrichment_analysis(data_list, library, herb_names):
@@ -301,8 +354,6 @@ def submit_form():
         if all_common_genes:
 
             all_unique_genes = find_unique_genes(all_common_genes)
-            # print(all_unique_genes)
-            # print(len(all_unique_genes))
 
             if all_unique_genes:
 
@@ -320,6 +371,7 @@ def submit_form():
 
                 # Pass the enrichment_data to the results page
                 return render_template('result.html', enrichment_data=enrichment_data)
+
 
     # If the method is not POST (e.g., accessing the page directly), redirect to the homepage
     return redirect(url_for('index'))

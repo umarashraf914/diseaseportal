@@ -1,18 +1,12 @@
-
-/* Add the background image and opacity to the body element */
 body {
-    display: flex;
+    display : flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    /*background-image: url("{{ url_for('static', filename='images/ktm.jpg') }}");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.5; /* Adjust the opacity as needed */
-    background-color: #f3f3f3;
+    padding: 0;
+    background-color: #D9D9D9;
 }
 
 /* Rest of your existing CSS rules... */
@@ -173,7 +167,6 @@ form button#clear-btn {
 form button:hover {
     opacity: 0.8;
 }
-/* Add this to your style.css file */
 .error-message {
     color: red;
     animation: flash 3s 2; /* Add flashing effect */
@@ -190,6 +183,13 @@ form button:hover {
     }
 }
 
+.navbar-link i {
+        color: white;
+    }
 
+.centered-links {
+    display: flex;
+    justify-content: center;
+}
 
 

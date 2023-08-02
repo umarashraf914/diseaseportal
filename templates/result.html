@@ -1,118 +1,19 @@
 
-<!--<!DOCTYPE html>-->
-<!--<html>-->
-<!--<head>-->
-<!--    <title>Results Page</title>-->
-<!--    <style>-->
-<!--        body {-->
-<!--            font-family: Arial, sans-serif;-->
-<!--            text-align: center;-->
-<!--            background-color: #f9f9f9;-->
-<!--        }-->
-
-<!--        h1 {-->
-<!--            margin-top: 20px;-->
-<!--            color: #333;-->
-<!--        }-->
-
-<!--        .results-container {-->
-<!--            display: flex;-->
-<!--            flex-wrap: wrap;-->
-<!--            justify-content: center;-->
-<!--            margin-top: 30px;-->
-<!--        }-->
-
-<!--        .result-table {-->
-<!--            width: 250px;-->
-<!--            border: 1px solid #ddd;-->
-<!--            border-radius: 5px;-->
-<!--            margin: 10px;-->
-<!--            padding: 10px;-->
-<!--            background-color: #fff;-->
-<!--            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);-->
-<!--        }-->
-
-<!--        .result-table h2 {-->
-<!--            margin: 0;-->
-<!--            padding-bottom: 10px;-->
-<!--            color: #555;-->
-<!--        }-->
-
-<!--        table {-->
-<!--            width: 100%;-->
-<!--        }-->
-
-<!--        th {-->
-<!--            background-color: #f2f2f2;-->
-<!--            padding: 8px;-->
-<!--            text-align: center;-->
-<!--            border-bottom: 1px solid #ddd;-->
-<!--        }-->
-
-<!--        td {-->
-<!--            padding: 8px;-->
-<!--            text-align: center;-->
-<!--            border-bottom: 1px solid #ddd;-->
-<!--        }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
-<!--    <h1>Enrichment Analysis Results</h1>-->
-<!--    {% with messages = get_flashed_messages() %}-->
-<!--        {% if messages %}-->
-<!--            <ul class="flashes">-->
-<!--                {% for message in messages %}-->
-<!--                    <li>{{ message }}</li>-->
-<!--                {% endfor %}-->
-<!--            </ul>-->
-<!--        {% endif %}-->
-<!--    {% endwith %}-->
-
-<!--    {% if missing_herbs %}-->
-<!--        <div class="missing-herbs-message">-->
-<!--            <p>The following herbs were not found in the database: {{ ', '.join(missing_herbs) }}</p>-->
-<!--        </div>-->
-<!--    {% endif %}-->
-
-<!--    <div class="results-container">-->
-<!--        {% if enrichment_data %}-->
-<!--            {% for data in enrichment_data %}-->
-<!--                <div class="result-table">-->
-<!--                    <h2>Prescription {{ loop.index }}</h2>-->
-<!--                    <h3>Herbs: {{ data['herb_names'] }}</h3> &lt;!&ndash; Add this line to show the herb names &ndash;&gt;-->
-<!--                    <table>-->
-<!--                        <thead>-->
-<!--                            <tr>-->
-<!--                                <th>Term Name</th>-->
-<!--                            </tr>-->
-<!--                        </thead>-->
-<!--                        <tbody>-->
-<!--                            {% for item in data['enrichment_data'][:15] %}-->
-<!--                                <tr>-->
-<!--                                    <td>{{ item['Term name'] }}</td>-->
-<!--                                </tr>-->
-<!--                            {% endfor %}-->
-<!--                        </tbody>-->
-<!--                    </table>-->
-<!--                </div>-->
-<!--            {% endfor %}-->
-<!--        {% else %}-->
-<!--            <p>No enrichment data available.</p>-->
-<!--        {% endif %}-->
-<!--    </div>-->
-<!--</body>-->
-<!--</html>-->
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Results Page</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background-color: #f9f9f9;
+            background-color: #D9D9D9;
             color: #333;
             line-height: 1.6;
         }
@@ -196,7 +97,33 @@
     </style>
 </head>
 <body>
-    <h1>Enrichment Analysis Results</h1>
+<nav class="navbar fixed-top navbar-dark bg-dark">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand mx-auto" href="#">Analysis Results</a> <!-- Moved the brand to the right -->
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto"> <!-- Use ml-auto for right alignment of the links -->
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+    </ul>
+  </div>
+</nav>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul class="flashes">
@@ -239,5 +166,23 @@
             <p class="empty-data">No enrichment data available.</p>
         {% endif %}
     </div>
+
+<nav class="navbar fixed-bottom navbar-dark bg-dark centered-links">
+    <a class="navbar-brand mr-3" href="#">Connect to Us on:</a>
+    <a class="navbar-link mr-4" href="https://www.facebook.com/withkiom/" target="_blank">
+        <i class="fab fa-facebook-f fa-2x"></i>
+    </a>
+    <a class="navbar-link mr-4" href="https://www.instagram.com/kiomistory/" target="_blank">
+        <i class="fab fa-instagram fa-2x"></i>
+    </a>
+    <a class="navbar-link mr-4" href="https://www.youtube.com/user/kiomvideo" target="_blank">
+        <i class="fab fa-youtube fa-2x"></i>
+    </a>
+</nav>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
