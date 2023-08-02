@@ -62,6 +62,7 @@ def search_disease(disease_name):
     disease_gene_symbols = [record.geneName for record in matching_records]
 
     if not disease_gene_symbols:
+
         return None
 
     return disease_gene_symbols
@@ -266,7 +267,7 @@ def enrichment_analysis(data_list, library, herb_names):
                     data['enrichment_data'].append(new_row.to_dict(orient='records')[0])
 
         # Filter the enrichment data to get only the top 15 entries with adjusted_p_value > 0.01
-        data['enrichment_data'] = data['enrichment_data'][:15]
+        data['enrichment_data'] = data['enrichment_data'][:12]
 
     return data_list
 
@@ -309,8 +310,6 @@ def submit_form():
         # Create a list of herb lists from the herbs_data
         herb_lists_list = [herbs_list.split(',') for herbs_list in herbs_data]
 
-        print(herb_lists_list)
-
         if len(herb_lists_list) > 1:
 
             # Check if all the prescriptions are the same
@@ -334,7 +333,6 @@ def submit_form():
             # Redirect back to the index page
             return redirect(url_for('index'))
 
-        print(len(disease_gene_symbols))
 
         # Call the search_herb_directory function to query the database for herb information
         all_herbs_gene_symbols = []
