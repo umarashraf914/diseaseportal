@@ -9,99 +9,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            background-color: #D9D9D9;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        h1 {
-            margin-top: 20px;
-            color: #555;
-            font-size: 28px;
-        }
-
-        .results-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .result-table {
-            width: 250px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin: 10px;
-            padding: 10px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.2s ease;
-        }
-
-        .result-table:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .result-table h2 {
-            margin: 0;
-            padding-bottom: 10px;
-            color: #555;
-            font-size: 20px;
-        }
-
-        .result-table h3 {
-            margin: 0;
-            color: #888;
-            font-size: 16px;
-        }
-
-        table {
-            width: 100%;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            padding: 8px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        td {
-            padding: 8px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .missing-herbs-message {
-            color: #ff0000;
-            margin-top: 20px;
-        }
-
-        .flashes {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .flashes li {
-            color: #ff0000;
-            margin-bottom: 5px;
-        }
-
-        .empty-data {
-            color: #888;
-        }
-    </style>
 </head>
 <body>
+
 <nav class="navbar fixed-top navbar-dark bg-dark">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand mx-auto" href="#">Analysis Results</a> <!-- Moved the brand to the right -->
+  <a class="navbar-brand mx-auto" href="#">Comparison Results</a> <!-- Moved the brand to the right -->
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto"> <!-- Use ml-auto for right alignment of the links -->
@@ -124,6 +39,8 @@
     </ul>
   </div>
 </nav>
+
+
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul class="flashes">
@@ -144,8 +61,8 @@
         {% if enrichment_data %}
             {% for data in enrichment_data %}
                 <div class="result-table">
-                    <h2>Prescription {{ loop.index }}</h2>
-                    <h3>Herbs: {{ data['herb_names'] }}</h3> <!-- Add this line to show the herb names -->
+                    <h2>Prescription {{ loop.index }} </h2>
+                    <h3>( {{ data['herb_names'] }} )</h3> <!-- Add this line to show the herb names -->
                     <table>
                         <thead>
                             <tr>
