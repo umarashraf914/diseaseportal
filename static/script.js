@@ -6,8 +6,8 @@ const maxHerbsCount = 3;
 const addBtn = document.getElementById('add-btn');
 const removeBtn = document.getElementById('remove-btn');
 
-// Get the herbs container
-const herbsContainer = document.querySelector('.herbs-container');
+// Get the herbs container that will hold dynamically added inputs
+const herbsContainer = document.getElementById('dynamic-herbs');
 
 // Function to add a herbs input field
 function addHerbsInput() {
