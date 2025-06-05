@@ -161,9 +161,9 @@ def upload_gene_lists(gene_lists):
             data = json.loads(response.text)
             all_data.append(data)
 
-        else:
+    else:
 
-            print('Cannot Upload Genes as unique genes list is empty')
+        print('Cannot Upload Genes as unique genes list is empty')
 
     return all_data
 

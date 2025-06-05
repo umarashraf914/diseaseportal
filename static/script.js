@@ -7,7 +7,7 @@ const addBtn = document.getElementById('add-btn');
 const removeBtn = document.getElementById('remove-btn');
 
 // Get the herbs container
-const herbsContainer = document.querySelector('.herbs-container');
+const herbsContainer = document.getElementById('dynamic-herbs');
 
 // Function to add a herbs input field
 function addHerbsInput() {
@@ -23,7 +23,7 @@ function addHerbsInput() {
     newHerbsInput.name = 'herbs[]'; // Note the square brackets to handle multiple values
     newHerbsInput.placeholder = 'Enter the herbs';
     newHerbsInput.required = true;
-    newHerbsInput.className = 'herbs-input';
+    newHerbsInput.className = 'herbs-input autocomplete';
 
     // Create a div to wrap the new herb input
     const herbInputWrapper = document.createElement('div');
@@ -31,6 +31,21 @@ function addHerbsInput() {
 
     herbInputWrapper.appendChild(newHerbsInput);
     herbsContainer.appendChild(herbInputWrapper);
+
+    // Initialize autocomplete for the dynamically added input
+    $(newHerbsInput).autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "/autocomplete_herbs",
+                data: { term: request.term },
+                dataType: "json",
+                success: function (data) {
+                    response(data);
+                },
+            });
+        },
+        minLength: 2,
+    });
 }
 
 // Function to remove the last herbs input field
